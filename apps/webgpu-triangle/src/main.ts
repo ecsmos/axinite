@@ -72,34 +72,41 @@ async function init() {
   /**
    * Main render loop
    */
-  function render() {
-    // Create a command encoder and get the current texture view
-    const commandEncoder = device.createCommandEncoder();
-    const textureView = context!.getCurrentTexture().createView();
+  function startRender(
+    device: GPUDevice,
+    context: GPUCanvasContext,
+    pipeline: GPURenderPipeline
+  ) {
+    function render() {
+      // Create a command encoder and get the current texture view
+      const commandEncoder = device.createCommandEncoder();
+      const textureView = context.getCurrentTexture().createView();
 
-    // Define the render pass descriptor
-    const renderPassDescriptor: GPURenderPassDescriptor = {
-      colorAttachments: [
-        {
-          view: textureView,
-          clearValue: { r: 0.1, g: 0.1, b: 0.1, a: 1.0 },
-          loadOp: 'clear',
-          storeOp: 'store',
-        },
-      ],
-    };
+      // Define the render pass descriptor
+      const renderPassDescriptor: GPURenderPassDescriptor = {
+        colorAttachments: [
+          {
+            view: textureView,
+            clearValue: { r: 0.1, g: 0.1, b: 0.1, a: 1.0 },
+            loadOp: 'clear',
+            storeOp: 'store',
+          },
+        ],
+      };
 
-    // Begin the render pass and execute commands
-    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-    passEncoder.setPipeline(pipeline);
-    passEncoder.draw(3);
-    passEncoder.end();
+      // Begin the render pass and execute commands
+      const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+      passEncoder.setPipeline(pipeline);
+      passEncoder.draw(3);
+      passEncoder.end();
 
-    // Submit the command buffer to the GPU queue
-    device.queue.submit([commandEncoder.finish()]);
+      // Submit the command buffer to the GPU queue
+      device.queue.submit([commandEncoder.finish()]);
 
-    // Schedule the next frame
-    requestAnimationFrame(render);
+      // Schedule the next frame
+      requestAnimationFrame(render);
+    }
+    render();
   }
 
   // Handle canvas resizing to maintain correct aspect ratio and resolution
@@ -115,7 +122,7 @@ async function init() {
   observer.observe(canvas);
 
   // Start the render loop
-  render();
+  startRender(device, context, pipeline);
 }
 
 // Global error handling for the initialization process
