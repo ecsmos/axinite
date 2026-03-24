@@ -1,53 +1,53 @@
 # Axinite Monorepo
 
-Monorepo на `bun` + `turborepo` с фронтендом на `vite` и форматированием/линтингом через `biome`.
+Monorepo on `bun` + `turborepo` with a `vite` frontend and formatting/linting via `biome`.
 
-## Что внутри
+## What's inside
 
-- `apps/demo`: демо-приложение на `three.js` с вращающимся кубом через `WebGPURenderer`.
-- `packages/utils`: задел под общие пакеты (пример библиотеки).
+- `apps/demo`: a demo app on `three.js` with a rotating cube via `WebGPURenderer`.
+- `packages/utils`: a starting point for shared packages (example library).
 
-## Требования
+## Requirements
 
-- `bun` версии примерно `1.1+` (в репозитории указан `packageManager: bun@1.1.0`)
-- Браузер с поддержкой `WebGPU` (демо не запустится без WebGPU; для локальной разработки обычно достаточно `localhost`).
-- Для WebGPU важен `secure context` (обычно `https` или `localhost`).
+- `bun` version around `1.1+` (the repo specifies `packageManager: bun@1.1.0`)
+- A browser with `WebGPU` support (the demo won't run without WebGPU; for local development, `localhost` is usually enough).
+- `secure context` is required for WebGPU (typically `https` or `localhost`).
 
-## Быстрый старт
+## Quick start
 
-1. Установить зависимости:
+1. Install dependencies:
 ```bash
 bun install
 ```
 
-2. Запустить демо:
+2. Start the demo:
 ```bash
 bun dev
 ```
 
-Откройте `http://localhost:3000/`.
+Open `http://localhost:3000/`.
 
-> Сейчас в монорепе только один app (`apps/demo`), поэтому `bun dev` фактически запускает именно его.
+> The monorepo currently contains only one app (`apps/demo`), so `bun dev` effectively starts it.
 
-## Сборка
+## Build
 
 ```bash
 bun build
 ```
 
-## Biome (линтинг и форматирование)
+## Biome (linting and formatting)
 
-Команды для терминала:
+Terminal commands:
 
 ```bash
 bun lint
 bun format
 ```
 
-Если вы используете Cursor/VS Code, то для “автоформата при сохранении”:
+If you're using Cursor/VS Code, to enable “format on save”:
 
-1. Установите расширение Biome: `biomejs.biome`
-2. Добавьте в `settings.json`:
+1. Install the Biome extension: `biomejs.biome`
+2. Add the following to `settings.json`:
 ```json
 {
   "editor.formatOnSave": true,
@@ -60,6 +60,6 @@ bun format
 }
 ```
 
-## Дальнейшее расширение
+## Further expansion
 
-Ожидается добавление новых приложений в `apps/*` и пакетов в `packages/*`. Для пакетов потом можно подключать их в `turbo.json` (например, build/lint).
+Adding new applications under `apps/*` and packages under `packages/*` is expected. Later, you can wire these packages into `turbo.json` (e.g. `build`/`lint`).
