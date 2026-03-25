@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebGPU Compute & Alignment</title>
+    <style>
+      body { margin: 0; padding: 20px; background-color: #1a1a1a; color: #eee; font-family: monospace; }
+      #output { background: #000; padding: 15px; border-radius: 5px; white-space: pre-wrap; margin-top: 20px; border: 1px solid #444; }
+      .error { color: #ff5555; }
+      .success { color: #55ff55; }
+      .warning { color: #ffff55; }
+    </style>
+  </head>
+  <body>
+    <h1>WebGPU Compute: Struct Alignment Challenge</h1>
+    <p>This project demonstrates the manual handling of WGSL memory layout (padding/alignment).</p>
+    <button id="run">Run Compute Shader</button>
+    <div id="output">Click "Run" to start...</div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
