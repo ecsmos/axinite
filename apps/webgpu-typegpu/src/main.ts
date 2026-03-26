@@ -90,9 +90,7 @@ async function runCompute() {
 
   // TypeGPU automatically creates the pipeline, bind groups, and shader code.
   // The 'guarded' version handles bounds checking automatically.
-  const pipeline = root['~unstable'].createGuardedComputePipeline(computeFn);
-
-  pipeline.dispatchThreads(PARTICLE_COUNT);
+  root.createGuardedComputePipeline(computeFn).dispatchThreads(PARTICLE_COUNT);
 
   // 6. Read results back easily
   logOutput('Reading results back from GPU...', 'info');
