@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "msdfgen-wasm": ["./node_modules/msdfgen-wasm/dist/types/index.d.ts"]
+    },
+    "lib": ["ESNext", "WebWorker", "DOM"],
+    "types": ["bun-types", "node"]
+  },
+  "include": ["src/**/*", "tsup.config.ts"]
+}

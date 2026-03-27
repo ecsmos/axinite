@@ -8,8 +8,8 @@
     "format": "biome format . --write"
   },
   "devDependencies": {
-    "turbo": "latest",
-    "@biomejs/biome": "latest"
+    "@biomejs/biome": "latest",
+    "turbo": "latest"
   },
   "workspaces": [
     "apps/*",
