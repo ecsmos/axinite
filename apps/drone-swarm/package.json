@@ -1,0 +1,26 @@
+{
+  "name": "@axinite/drone-swarm",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "bitecs": "latest",
+    "three": "latest",
+    "typegpu": "latest",
+    "@typegpu/three": "latest",
+    "comlink": "latest",
+    "@axinite/assets": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/three": "^0.183.1",
+    "typescript": "latest",
+    "vite": "latest",
+    "vite-plugin-top-level-await": "latest",
+    "vite-plugin-wasm": "latest"
+  }
+}
