@@ -1,0 +1,13 @@
+/*
+!/packages/
+/packages/*
+!/packages/gltf-ecs/
+
+**/node_modules/
+**/dist/
+
+!/biome.json
+!/package.json
+!/tsconfig.json
+!/turbo.json
+!/gltf-transform-khr-extensions-and-functions.md

@@ -10,7 +10,8 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "lib": ["ESNext", "DOM"],
-    "types": ["bun-types", "node"]
+    "types": ["bun-types", "node"],
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src/**/*"]
 }
