@@ -1,7 +1,10 @@
 /*
+
+!/apps/
+/apps/*
+
 !/packages/
 /packages/*
-!/packages/gltf-ecs/
 
 **/node_modules/
 **/dist/
@@ -11,3 +14,5 @@
 !/tsconfig.json
 !/turbo.json
 !/gltf-transform-khr-extensions-and-functions.md
+
+!/apps/gltf-typegpu-ecs/
