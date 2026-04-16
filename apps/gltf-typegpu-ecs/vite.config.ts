@@ -4,6 +4,7 @@ import topLevelAwait from 'vite-plugin-top-level-await';
 import typegpu from 'unplugin-typegpu/vite';
 
 export default defineConfig({
+  base: '/axinite/gltf-typegpu-ecs/',
   plugins: [
     typegpu(),
     wasm(),

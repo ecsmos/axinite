@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: '/axinite/webgpu-bitecs/',
   server: {
     port: 3004,
     headers: {

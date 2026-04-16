@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: '/axinite/asset-test/',
   server: {
     port: 3005,
     headers: {
