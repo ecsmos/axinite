@@ -23,6 +23,13 @@ export class Assets {
    * next to the library file.
    */
   constructor(workerUrl?: string | URL) {
+    // Fix for GH Pages: ensure worker is loaded from the correct base path
+    if (!workerUrl && import.meta.env.PROD) {
+      workerUrl = new URL(
+        '/axinite/asset-test/assets/worker-zu8oxJi4.mjs',
+        window.location.origin,
+      );
+    }
     const defaultUrl = new URL('./worker.mjs', import.meta.url);
     this.worker = new Worker(workerUrl || defaultUrl, { type: 'module' });
     this.api = Comlink.wrap<AssetWorkerApi>(this.worker);

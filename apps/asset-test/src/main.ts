@@ -1,7 +1,10 @@
 import { Assets } from '@axinite/assets';
 
 // 1. Initialize Assets
-const assets = new Assets();
+const workerUrl = import.meta.env.PROD
+  ? '/axinite/asset-test/assets/worker-zu8oxJi4.mjs'
+  : undefined;
+const assets = new Assets(workerUrl);
 
 async function runTests() {
   console.log('[AssetTest] Starting tests...');

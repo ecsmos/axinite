@@ -2,7 +2,7 @@
 
 [**Live Portfolio**](https://ecsmos.github.io/axinite/)
 
-Monorepo on \`bun\` + \`turborepo\`, frontends on \`vite\`, formatting/linting via \`biome\`.
+Monorepo on `bun` + `turborepo`, frontends on `vite`, formatting/linting via `biome`.
 
 Project goal: collect the evolution of WebGPU/TypeGPU infrastructure and package the final showcase as a portfolio.
 
@@ -20,7 +20,7 @@ This repository is structured as a laboratory for high-performance web graphics,
 
 ## 📂 Project Structure
 
-\`\`\`bash
+```bash
 axinite/
 ├── apps/
 │   ├── gltf-typegpu-ecs/  # 💎 Final Portfolio Piece: glTF + GPU Compute + ECS
@@ -33,7 +33,7 @@ axinite/
 │   └── asset-test/        # 📦 Pipeline for runtime asset loading
 ├── packages/              # Shared packages (gltf-ecs, assets)
 └── README.md              # This documentation
-\`\`\`
+```
 
 ## 🧪 Experiments Journey
 
@@ -58,24 +58,24 @@ Learning the power of type-safe GPU programming.
 
 ### Installation
 
-\`\`\`bash
+```bash
 # Clone the repository
 git clone https://github.com/ecsmos/axinite.git
 cd axinite
 
 # Install dependencies
 bun install
-\`\`\`
+```
 
 ### Running Locally
 
-\`\`\`bash
+```bash
 # Start all projects in development mode
 bun dev
 
 # Run a specific experiment
 bun dev --filter drone-swarm
-\`\`\`
+```
 
 ## 📜 License
 
