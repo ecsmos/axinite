@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "latest",
+    "bun-types": "^1.3.12",
     "turbo": "latest"
   },
   "workspaces": [

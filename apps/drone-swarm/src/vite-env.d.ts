@@ -13,6 +13,12 @@ declare module 'three/tsl' {
   const normalWorld: any;
   const vec4: any;
   const uint: any;
+  const float: any;
+  const select: any;
+  const equal: any;
+  const cyan: any;
+  const magenta: any;
+  const yellow: any;
   export {
     instanceIndex,
     time,
@@ -28,6 +34,12 @@ declare module 'three/tsl' {
     normalWorld,
     vec4,
     uint,
+    float,
+    select,
+    equal,
+    cyan,
+    magenta,
+    yellow,
   };
 }
 
