@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="coi-serviceworker.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axinite: 100k Drone Swarm (bitECS + WebGPU)</title>
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: monospace; overflow: hidden; }
+        #app { width: 100vw; height: 100vh; }
+        #ui { position: absolute; top: 20px; left: 20px; pointer-events: none; text-shadow: 1px 1px 2px #000; }
+        .stat { color: cyan; font-size: 1.2rem; margin-bottom: 5px; }
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); z-index: 10; cursor: pointer; }
+    </style>
+  <script type="module" crossorigin src="/axinite/drone-swarm/assets/index-CIaugpIm.js"></script>
+</head>
+<body>
+    <div id="overlay"><h1>Click to Initialize 100k Drones</h1></div>
+    <div id="ui">
+        <div class="stat">Drones: <span id="count">100,000</span></div>
+        <div class="stat">FPS: <span id="fps">0</span></div>
+        <div class="stat">Engine: bitECS + WebGPU (SAB)</div>
+        <div id="debug">Initializing...</div>
+    </div>
+    <div id="app"></div>
+</body>
+</html>
