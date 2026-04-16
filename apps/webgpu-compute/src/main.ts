@@ -7,16 +7,16 @@ import shaderCode from './shader.wgsl?raw';
  * - vec4f (16 bytes) must be aligned to 16-byte boundaries.
  * - Structs are aligned to the largest alignment of its members (here, 16).
  * - Total struct size must be a multiple of its alignment (here, 16).
- * 
+ *
  * TypeScript ArrayBuffer doesn't know about these rules automatically!
  * We must manually calculate offsets or use padding.
  */
 
-interface Particle {
-  pos: [number, number];      // 8 bytes (offset 0)
+export interface Particle {
+  pos: [number, number]; // 8 bytes (offset 0)
   velocity: [number, number]; // 8 bytes (offset 8)
   color: [number, number, number, number]; // 16 bytes (offset 16)
-  size: number;               // 4 bytes (offset 32)
+  size: number; // 4 bytes (offset 32)
   // --- Manual Padding Required here! ---
   // Offset 36 to 48 (12 bytes) must be empty to align to 16 bytes.
 }
@@ -28,7 +28,10 @@ interface Particle {
 const PARTICLE_FLOAT_SIZE = 12; // 48 bytes total
 const PARTICLE_COUNT = 1000;
 
-const logOutput = (text: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+const logOutput = (
+  text: string,
+  type: 'info' | 'success' | 'warning' | 'error' = 'info',
+) => {
   const el = document.getElementById('output');
   if (el) {
     const span = document.createElement('span');
@@ -39,16 +42,16 @@ const logOutput = (text: string, type: 'info' | 'success' | 'warning' | 'error' 
 };
 
 async function runCompute() {
-  logOutput("Initializing WebGPU...", "info");
-  
+  logOutput('Initializing WebGPU...', 'info');
+
   if (!navigator.gpu) {
-    logOutput("WebGPU not supported.", "error");
+    logOutput('WebGPU not supported.', 'error');
     return;
   }
 
   const adapter = await navigator.gpu.requestAdapter();
   if (!adapter) {
-    logOutput("No GPU Adapter.", "error");
+    logOutput('No GPU Adapter.', 'error');
     return;
   }
 
@@ -56,39 +59,45 @@ async function runCompute() {
 
   // Create manual buffer data (Float32Array)
   const bufferData = new Float32Array(PARTICLE_COUNT * PARTICLE_FLOAT_SIZE);
-  
+
   // Fill initial data
   for (let i = 0; i < PARTICLE_COUNT; i++) {
     const offset = i * PARTICLE_FLOAT_SIZE;
-    
+
     // pos
     bufferData[offset + 0] = Math.random() * 2 - 1; // x
     bufferData[offset + 1] = Math.random() * 2 - 1; // y
-    
+
     // velocity
     bufferData[offset + 2] = (Math.random() - 0.5) * 0.01; // vx
     bufferData[offset + 3] = (Math.random() - 0.5) * 0.01; // vy
-    
+
     // color (RGBA)
     bufferData[offset + 4] = 1.0; // r
     bufferData[offset + 5] = 1.0; // g
     bufferData[offset + 6] = 0.0; // b
     bufferData[offset + 7] = 1.0; // a
-    
+
     // size
     bufferData[offset + 8] = Math.random() * 0.05 + 0.01;
-    
+
     // PADDING: offset 9, 10, 11 are left as 0.0 (uninitialized)
     // CRITICAL: If we skip these 3 floats, our indexing for the NEXT particle will be wrong!
   }
 
-  logOutput(`Created buffer for ${PARTICLE_COUNT} particles (${bufferData.byteLength} bytes).`, "info");
+  logOutput(
+    `Created buffer for ${PARTICLE_COUNT} particles (${bufferData.byteLength} bytes).`,
+    'info',
+  );
 
   // Create the GPU storage buffer
   const particleBuffer = device.createBuffer({
     label: 'Particle Storage Buffer',
     size: bufferData.byteLength,
-    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+    usage:
+      GPUBufferUsage.STORAGE |
+      GPUBufferUsage.COPY_SRC |
+      GPUBufferUsage.COPY_DST,
   });
 
   // Upload data to GPU
@@ -126,7 +135,7 @@ async function runCompute() {
   const passEncoder = commandEncoder.beginComputePass();
   passEncoder.setPipeline(pipeline);
   passEncoder.setBindGroup(0, bindGroup);
-  
+
   const workgroupCount = Math.ceil(PARTICLE_COUNT / 64);
   passEncoder.dispatchWorkgroups(workgroupCount);
   passEncoder.end();
@@ -140,32 +149,55 @@ async function runCompute() {
 
   // Copy results from GPU back to staging buffer
   commandEncoder.copyBufferToBuffer(
-    particleBuffer, 0, 
-    stagingBuffer, 0, 
-    bufferData.byteLength
+    particleBuffer,
+    0,
+    stagingBuffer,
+    0,
+    bufferData.byteLength,
   );
 
   device.queue.submit([commandEncoder.finish()]);
-  logOutput(`Submitted compute commands with ${workgroupCount} workgroups.`, "info");
+  logOutput(
+    `Submitted compute commands with ${workgroupCount} workgroups.`,
+    'info',
+  );
 
   // Map buffer to read it in CPU
   await stagingBuffer.mapAsync(GPUMapMode.READ);
   const resultData = new Float32Array(stagingBuffer.getMappedRange());
-  
+
   // Check first particle results
-  logOutput(`Compute results for Particle 0:`, "success");
-  logOutput(`  Old Pos: (${bufferData[0].toFixed(4)}, ${bufferData[1].toFixed(4)})`, "info");
-  logOutput(`  New Pos: (${resultData[0].toFixed(4)}, ${resultData[1].toFixed(4)})`, "success");
-  logOutput(`  New Color (R): ${resultData[4].toFixed(4)}`, "success");
-  logOutput(`  New Size: ${resultData[8].toFixed(4)}`, "warning");
+  logOutput(`Compute results for Particle 0:`, 'success');
+  logOutput(
+    `  Old Pos: (${bufferData[0].toFixed(4)}, ${bufferData[1].toFixed(4)})`,
+    'info',
+  );
+  logOutput(
+    `  New Pos: (${resultData[0].toFixed(4)}, ${resultData[1].toFixed(4)})`,
+    'success',
+  );
+  logOutput(`  New Color (R): ${resultData[4].toFixed(4)}`, 'success');
+  logOutput(`  New Size: ${resultData[8].toFixed(4)}`, 'warning');
 
   stagingBuffer.unmap();
-  logOutput("Compute finished successfully.", "success");
-  logOutput("\nPROBLEM HIGHLIGHTED:", "warning");
-  logOutput("1. We had to manually insert 12 bytes of padding (3 floats) per particle.", "warning");
-  logOutput("2. We had to manually calculate 'PARTICLE_FLOAT_SIZE = 12'.", "warning");
-  logOutput("3. If WGSL struct changes, all TypeScript buffer offsets will BREAK.", "error");
-  logOutput("TypeGPU solves this by generating these buffers automatically from a schema!", "success");
+  logOutput('Compute finished successfully.', 'success');
+  logOutput('\nPROBLEM HIGHLIGHTED:', 'warning');
+  logOutput(
+    '1. We had to manually insert 12 bytes of padding (3 floats) per particle.',
+    'warning',
+  );
+  logOutput(
+    "2. We had to manually calculate 'PARTICLE_FLOAT_SIZE = 12'.",
+    'warning',
+  );
+  logOutput(
+    '3. If WGSL struct changes, all TypeScript buffer offsets will BREAK.',
+    'error',
+  );
+  logOutput(
+    'TypeGPU solves this by generating these buffers automatically from a schema!',
+    'success',
+  );
 }
 
 document.getElementById('run')?.addEventListener('click', runCompute);

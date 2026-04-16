@@ -1,14 +1,19 @@
-import { Document, WebIO, Accessor, PropertyType } from '@gltf-transform/core';
-import { flatten, dedup, instance, prune } from '@gltf-transform/functions';
-import type { 
-  GltfAssetData, 
-  GltfGeometryData, 
-  GltfMaterialData,
-  GltfAnimationData,
+import {
+  type Accessor,
+  type Document,
+  PropertyType,
+  WebIO,
+} from '@gltf-transform/core';
+import { dedup, flatten, instance, prune } from '@gltf-transform/functions';
+import type {
+  AssetLoaderOptions,
   GltfAnimationChannel,
+  GltfAnimationData,
+  GltfAssetData,
+  GltfGeometryData,
+  GltfMaterialData,
   GltfNodeData,
   GltfSkinData,
-  AssetLoaderOptions 
 } from '../types';
 
 /**
@@ -26,7 +31,10 @@ export class GltfLoader {
   /**
    * Loads a glTF file and processes it for ECS/WebGPU
    */
-  async load(url: string, options: AssetLoaderOptions = {}): Promise<GltfAssetData> {
+  async load(
+    url: string,
+    options: AssetLoaderOptions = {},
+  ): Promise<GltfAssetData> {
     const assetId = options.id || url;
 
     // 1. Check cache
@@ -43,9 +51,9 @@ export class GltfLoader {
     if (options.process !== false) {
       await doc.transform(
         flatten(), // Flattens scene graph
-        prune(),   // Remove unused properties
-        dedup(),   // Deduplicate properties (materials, accessors, etc.)
-        instance() // Add EXT_mesh_gpu_instancing if possible
+        prune(), // Remove unused properties
+        dedup(), // Deduplicate properties (materials, accessors, etc.)
+        instance(), // Add EXT_mesh_gpu_instancing if possible
       );
     }
 
@@ -61,19 +69,22 @@ export class GltfLoader {
   /**
    * Extracts hierarchy, geometry, and textures into efficient transferrable structures
    */
-  private async extractAssetData(doc: Document, id: string): Promise<GltfAssetData> {
+  private async extractAssetData(
+    doc: Document,
+    id: string,
+  ): Promise<GltfAssetData> {
     const root = doc.getRoot();
-    
+
     // Maps to keep track of indices
     const allNodes = root.listNodes();
     const nodeToIndex = new Map(allNodes.map((node, i) => [node, i]));
-    
+
     const allMeshes = root.listMeshes();
     const meshToIndex = new Map(allMeshes.map((mesh, i) => [mesh, i]));
-    
+
     const allSkins = root.listSkins();
     const skinToIndex = new Map(allSkins.map((skin, i) => [skin, i]));
-    
+
     const allTextures = root.listTextures();
     const textureToIndex = new Map(allTextures.map((tex, i) => [tex, i]));
 
@@ -83,8 +94,10 @@ export class GltfLoader {
     const parentIndices = new Int32Array(allNodes.length);
     const nodes: GltfNodeData[] = allNodes.map((node, i) => {
       // Find parent index
-      const parent = node.listParents().find((p) => p.propertyType === PropertyType.NODE);
-      parentIndices[i] = parent ? nodeToIndex.get(parent as any) ?? -1 : -1;
+      const parent = node
+        .listParents()
+        .find((p) => p.propertyType === PropertyType.NODE);
+      parentIndices[i] = parent ? (nodeToIndex.get(parent as any) ?? -1) : -1;
 
       return {
         name: node.getName() || `node_${i}`,
@@ -102,7 +115,7 @@ export class GltfLoader {
       const prims = mesh.listPrimitives();
       if (prims.length === 0) continue;
 
-      // Currently, we take the first primitive. 
+      // Currently, we take the first primitive.
       // Multi-primitive meshes should ideally be handled by splitting into separate nodes in bitECS.
       const prim = prims[0];
       const geometryData: GltfGeometryData = { attributes: {} };
@@ -119,7 +132,8 @@ export class GltfLoader {
         geometryData.indices = this.accessorToSAB(indices);
       }
 
-      geometries[mesh.getName() || `mesh_${allMeshes.indexOf(mesh)}`] = geometryData;
+      geometries[mesh.getName() || `mesh_${allMeshes.indexOf(mesh)}`] =
+        geometryData;
     }
 
     // --- 3. Materials ---
@@ -129,8 +143,10 @@ export class GltfLoader {
       emissiveFactor: Array.from(mat.getEmissiveFactor()),
       metallicFactor: mat.getMetallicFactor(),
       roughnessFactor: mat.getRoughnessFactor(),
-      baseColorTextureIndex: textureToIndex.get(mat.getBaseColorTexture()!) ?? -1,
-      metallicRoughnessTextureIndex: textureToIndex.get(mat.getMetallicRoughnessTexture()!) ?? -1,
+      baseColorTextureIndex:
+        textureToIndex.get(mat.getBaseColorTexture()!) ?? -1,
+      metallicRoughnessTextureIndex:
+        textureToIndex.get(mat.getMetallicRoughnessTexture()!) ?? -1,
       normalTextureIndex: textureToIndex.get(mat.getNormalTexture()!) ?? -1,
       emissiveTextureIndex: textureToIndex.get(mat.getEmissiveTexture()!) ?? -1,
     }));
@@ -148,32 +164,39 @@ export class GltfLoader {
     }
 
     // --- 5. Animations ---
-    const animations: GltfAnimationData[] = root.listAnimations().map((anim, i) => {
-      const channels: GltfAnimationChannel[] = anim.listChannels()
-        .map(channel => {
-          const targetNode = channel.getTargetNode();
-          const sampler = channel.getSampler()!;
-          
-          return {
-            targetNodeIndex: targetNode ? nodeToIndex.get(targetNode) ?? -1 : -1,
-            targetProperty: channel.getTargetPath() as any,
-            interpolation: sampler.getInterpolation() as any,
-            input: this.accessorToSAB(sampler.getInput()!),
-            output: this.accessorToSAB(sampler.getOutput()!),
-          };
-        })
-        .filter(c => c.targetNodeIndex !== -1);
+    const animations: GltfAnimationData[] = root
+      .listAnimations()
+      .map((anim, i) => {
+        const channels: GltfAnimationChannel[] = anim
+          .listChannels()
+          .map((channel) => {
+            const targetNode = channel.getTargetNode();
+            const sampler = channel.getSampler()!;
 
-      return {
-        name: anim.getName() || `animation_${i}`,
-        channels,
-      };
-    });
+            return {
+              targetNodeIndex: targetNode
+                ? (nodeToIndex.get(targetNode) ?? -1)
+                : -1,
+              targetProperty: channel.getTargetPath() as any,
+              interpolation: sampler.getInterpolation() as any,
+              input: this.accessorToSAB(sampler.getInput()!),
+              output: this.accessorToSAB(sampler.getOutput()!),
+            };
+          })
+          .filter((c) => c.targetNodeIndex !== -1);
+
+        return {
+          name: anim.getName() || `animation_${i}`,
+          channels,
+        };
+      });
 
     // --- 6. Skins ---
     const skins: GltfSkinData[] = allSkins.map((skin, i) => ({
       name: skin.getName() || `skin_${i}`,
-      jointIndices: skin.listJoints().map(joint => nodeToIndex.get(joint) ?? -1),
+      jointIndices: skin
+        .listJoints()
+        .map((joint) => nodeToIndex.get(joint) ?? -1),
       inverseBindMatrices: this.accessorToSAB(skin.getInverseBindMatrices()!),
     }));
 

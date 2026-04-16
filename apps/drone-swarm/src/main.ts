@@ -1,9 +1,13 @@
-import * as THREE from 'three';
-import { WebGPURenderer, MeshBasicNodeMaterial, StorageInstancedBufferAttribute } from 'three/webgpu';
-import * as TSL from 'three/tsl';
 import * as Comlink from 'comlink';
-import tgpu from 'typegpu';
+import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import * as TSL from 'three/tsl';
+import {
+  MeshBasicNodeMaterial,
+  StorageInstancedBufferAttribute,
+  WebGPURenderer,
+} from 'three/webgpu';
+import tgpu from 'typegpu';
 import { createSharedBuffers, MAX_DRONES } from './types';
 import type { DroneWorkerApi } from './worker';
 
@@ -11,10 +15,14 @@ async function init() {
   const overlay = document.getElementById('overlay');
   if (!overlay) return;
 
-  overlay.addEventListener('click', async () => {
-    overlay.style.display = 'none';
-    await startSwarm();
-  }, { once: true });
+  overlay.addEventListener(
+    'click',
+    async () => {
+      overlay.style.display = 'none';
+      await startSwarm();
+    },
+    { once: true },
+  );
 }
 
 async function startSwarm() {
@@ -32,8 +40,13 @@ async function startSwarm() {
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x050505);
-  
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+
+  const camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    2000,
+  );
   camera.position.set(300, 200, 300);
   camera.lookAt(0, 50, 0);
 
@@ -54,7 +67,9 @@ async function startSwarm() {
 
   // 3. Initialize Shared Data & Worker
   const shared = createSharedBuffers();
-  const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
+  const worker = new Worker(new URL('./worker.ts', import.meta.url), {
+    type: 'module',
+  });
   const workerApi = Comlink.wrap<DroneWorkerApi>(worker);
   await workerApi.init(shared);
 
@@ -68,19 +83,34 @@ async function startSwarm() {
 
   const count = TSL.uint(MAX_DRONES);
   const instancePos = TSL.vec3(
-    TSL.storage(posAttribute, 'float', MAX_DRONES * 3).element(TSL.instanceIndex),
-    TSL.storage(posAttribute, 'float', MAX_DRONES * 3).element(TSL.instanceIndex.add(count)),
-    TSL.storage(posAttribute, 'float', MAX_DRONES * 3).element(TSL.instanceIndex.add(count.mul(2)))
+    TSL.storage(posAttribute, 'float', MAX_DRONES * 3).element(
+      TSL.instanceIndex,
+    ),
+    TSL.storage(posAttribute, 'float', MAX_DRONES * 3).element(
+      TSL.instanceIndex.add(count),
+    ),
+    TSL.storage(posAttribute, 'float', MAX_DRONES * 3).element(
+      TSL.instanceIndex.add(count.mul(2)),
+    ),
   );
-  const instancePhase = TSL.storage(phaseAttribute, 'float', MAX_DRONES).element(TSL.instanceIndex);
-  const instanceMode = TSL.storage(modeAttribute, 'uint', MAX_DRONES).element(TSL.instanceIndex);
+  const instancePhase = TSL.storage(
+    phaseAttribute,
+    'float',
+    MAX_DRONES,
+  ).element(TSL.instanceIndex);
+  const instanceMode = TSL.storage(modeAttribute, 'uint', MAX_DRONES).element(
+    TSL.instanceIndex,
+  );
 
   const tsl = TSL as any;
-  const localPos = tsl.positionLocal || tsl.positionGeometry || tsl.attribute('position');
-  
+  const localPos =
+    tsl.positionLocal || tsl.positionGeometry || tsl.attribute('position');
+
   // Custom wiggle that uses unique phase for each drone
   const uniqueTime = TSL.time.add(instancePhase);
-  material.positionNode = localPos.add(instancePos).add(TSL.vec3(0, TSL.sin(uniqueTime).mul(1.0), 0));
+  material.positionNode = localPos
+    .add(instancePos)
+    .add(TSL.vec3(0, TSL.sin(uniqueTime).mul(1.0), 0));
 
   // Unique colors based on mode
   const cyan = TSL.color(0x00ffff);
@@ -88,28 +118,28 @@ async function startSwarm() {
   const yellow = TSL.color(0xffff00);
 
   const baseColor = tsl.select(
-    instanceMode.equal(0), cyan,
-    tsl.select(
-        instanceMode.equal(1), magenta,
-        yellow
-    )
+    instanceMode.equal(0),
+    cyan,
+    tsl.select(instanceMode.equal(1), magenta, yellow),
   );
 
-  // VITAL FIX: WGSL sin() only accepts floats. 
+  // VITAL FIX: WGSL sin() only accepts floats.
   // We must explicitly cast instanceIndex (u32) to float (f32) before calling sin().
   const indexFloat = TSL.float(TSL.instanceIndex);
-  
+
   const varR = TSL.sin(indexFloat.mul(1234.567)).mul(0.2);
   const varG = TSL.sin(indexFloat.mul(5678.901)).mul(0.2);
   const varB = TSL.sin(indexFloat.mul(9012.345)).mul(0.2);
-  
+
   const finalBaseColor = baseColor.add(TSL.vec3(varR, varG, varB));
 
   // Unique blinking phase and speed for each drone
   const blinkSeed = TSL.sin(indexFloat.mul(4321.123));
   const blinkSpeed = blinkSeed.mul(2.0).add(3.0);
-  const blink = TSL.oscSine(TSL.time.mul(blinkSpeed).add(instancePhase.mul(10.0)));
-  
+  const blink = TSL.oscSine(
+    TSL.time.mul(blinkSpeed).add(instancePhase.mul(10.0)),
+  );
+
   material.colorNode = finalBaseColor.mul(blink);
 
   // 6. Spawn the Mesh

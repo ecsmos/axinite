@@ -22,7 +22,7 @@ const workerApi = {
     // Direct iteration for maximum performance
     for (let i = 0; i < entities.length; i++) {
       const eid = entities[i];
-      
+
       // Update position
       Position.x[eid] += Velocity.x[eid] * dt;
       Position.y[eid] += Velocity.y[eid] * dt;

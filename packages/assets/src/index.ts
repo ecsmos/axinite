@@ -1,6 +1,11 @@
 import * as Comlink from 'comlink';
+import type {
+  AssetLoaderOptions,
+  AudioAssetData,
+  GltfAssetData,
+  TextAssetData,
+} from './types';
 import type { AssetWorkerApi } from './worker';
-import type { GltfAssetData, AudioAssetData, TextAssetData, AssetLoaderOptions } from './types';
 
 /**
  * Main Thread API for @axinite/assets
@@ -34,7 +39,10 @@ export class Assets {
   /**
    * Loads a glTF asset asynchronously through the worker
    */
-  async loadGltf(url: string, options: AssetLoaderOptions = {}): Promise<GltfAssetData> {
+  async loadGltf(
+    url: string,
+    options: AssetLoaderOptions = {},
+  ): Promise<GltfAssetData> {
     const id = options.id || url;
     const cached = this.cache.get(id);
     if (cached) return cached as GltfAssetData;
@@ -48,7 +56,10 @@ export class Assets {
    * Loads a raw audio asset, decodes it into PCM, and shares it via SAB.
    * Returns both the SAB-backed AudioAssetData and a WebAudio AudioBuffer.
    */
-  async loadAudio(url: string, options: AssetLoaderOptions = {}): Promise<AudioAssetData & { audioBuffer: AudioBuffer }> {
+  async loadAudio(
+    url: string,
+    options: AssetLoaderOptions = {},
+  ): Promise<AudioAssetData & { audioBuffer: AudioBuffer }> {
     const id = options.id || url;
     const cached = this.cache.get(id);
     if (cached) return cached as AudioAssetData & { audioBuffer: AudioBuffer };
@@ -58,8 +69,8 @@ export class Assets {
 
     // 2. Decode the compressed data on the main thread (WebAudio constraint)
     const ctx = this.getAudioCtx();
-    
-    // We must copy the SAB data to a regular ArrayBuffer because decodeAudioData 
+
+    // We must copy the SAB data to a regular ArrayBuffer because decodeAudioData
     // does not accept SharedArrayBuffer.
     const bufferCopy = new ArrayBuffer(rawBuffer.byteLength);
     new Uint8Array(bufferCopy).set(new Uint8Array(rawBuffer));
@@ -92,7 +103,7 @@ export class Assets {
         channels: audioBuffer.numberOfChannels,
         sampleRate,
         duration,
-      }
+      },
     };
 
     // 4. Send the fully decoded asset data BACK to the worker to update its cache
@@ -110,7 +121,10 @@ export class Assets {
   /**
    * Loads an MSDF font (metadata + atlas) asynchronously through the worker
    */
-  async loadText(url: string, options: AssetLoaderOptions = {}): Promise<TextAssetData> {
+  async loadText(
+    url: string,
+    options: AssetLoaderOptions = {},
+  ): Promise<TextAssetData> {
     const id = options.id || url;
     const cached = this.cache.get(id);
     if (cached) return cached as TextAssetData;

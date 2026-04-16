@@ -26,8 +26,8 @@ export const SwarmPositionBufferSchema = d.arrayOf(d.f32, MAX_DRONES * 3);
 export const SwarmPhaseBufferSchema = d.arrayOf(d.f32, MAX_DRONES);
 
 export interface SharedBuffers {
-  position: Float32Array; 
-  velocity: Float32Array; 
+  position: Float32Array;
+  velocity: Float32Array;
   phase: Float32Array;
   mode: Uint8Array;
 }
@@ -36,10 +36,18 @@ export interface SharedBuffers {
  * Creates the SharedArrayBuffers used by both ECS and WebGPU.
  */
 export function createSharedBuffers(): SharedBuffers {
-  const posSAB = new SharedArrayBuffer(MAX_DRONES * 3 * Float32Array.BYTES_PER_ELEMENT);
-  const velSAB = new SharedArrayBuffer(MAX_DRONES * 3 * Float32Array.BYTES_PER_ELEMENT);
-  const phaseSAB = new SharedArrayBuffer(MAX_DRONES * Float32Array.BYTES_PER_ELEMENT);
-  const modeSAB = new SharedArrayBuffer(MAX_DRONES * Uint8Array.BYTES_PER_ELEMENT);
+  const posSAB = new SharedArrayBuffer(
+    MAX_DRONES * 3 * Float32Array.BYTES_PER_ELEMENT,
+  );
+  const velSAB = new SharedArrayBuffer(
+    MAX_DRONES * 3 * Float32Array.BYTES_PER_ELEMENT,
+  );
+  const phaseSAB = new SharedArrayBuffer(
+    MAX_DRONES * Float32Array.BYTES_PER_ELEMENT,
+  );
+  const modeSAB = new SharedArrayBuffer(
+    MAX_DRONES * Uint8Array.BYTES_PER_ELEMENT,
+  );
 
   return {
     position: new Float32Array(posSAB),

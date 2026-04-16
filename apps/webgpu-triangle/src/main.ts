@@ -75,7 +75,7 @@ async function init() {
   function startRender(
     device: GPUDevice,
     context: GPUCanvasContext,
-    pipeline: GPURenderPipeline
+    pipeline: GPURenderPipeline,
   ) {
     function render() {
       // Create a command encoder and get the current texture view
@@ -115,8 +115,14 @@ async function init() {
       const canvas = entry.target as HTMLCanvasElement;
       const width = entry.contentBoxSize[0].inlineSize;
       const height = entry.contentBoxSize[0].blockSize;
-      canvas.width = Math.max(1, Math.min(width, device.limits.maxTextureDimension2D));
-      canvas.height = Math.max(1, Math.min(height, device.limits.maxTextureDimension2D));
+      canvas.width = Math.max(
+        1,
+        Math.min(width, device.limits.maxTextureDimension2D),
+      );
+      canvas.height = Math.max(
+        1,
+        Math.min(height, device.limits.maxTextureDimension2D),
+      );
     }
   });
   observer.observe(canvas);
@@ -132,7 +138,8 @@ init().catch((err) => {
   if (info) {
     info.textContent = `WebGPU Error: ${err.message}`;
     const div = document.createElement('div');
-    div.textContent = 'Please check if WebGPU is enabled in your browser settings.';
+    div.textContent =
+      'Please check if WebGPU is enabled in your browser settings.';
     info.parentElement?.appendChild(div);
   }
 });

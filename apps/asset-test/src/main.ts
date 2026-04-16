@@ -6,7 +6,10 @@ const assets = new Assets();
 async function runTests() {
   console.log('[AssetTest] Starting tests...');
   console.log('[AssetTest] crossOriginIsolated:', window.crossOriginIsolated);
-  console.log('[AssetTest] has SharedArrayBuffer:', typeof SharedArrayBuffer !== 'undefined');
+  console.log(
+    '[AssetTest] has SharedArrayBuffer:',
+    typeof SharedArrayBuffer !== 'undefined',
+  );
 
   // --- Font Test ---
   const fontStatus = document.getElementById('font-status')!;

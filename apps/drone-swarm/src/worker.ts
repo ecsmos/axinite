@@ -1,5 +1,5 @@
+import { addComponent, addEntity, createWorld, query } from 'bitecs';
 import * as Comlink from 'comlink';
-import { createWorld, addEntity, addComponent, query } from 'bitecs';
 import { MAX_DRONES } from './types';
 
 let world: any;
@@ -12,11 +12,18 @@ const workerApi = {
   /**
    * Initializes the bitECS world with shared buffers from main thread
    */
-  init(buffers: { position: Float32Array, velocity: Float32Array, phase: Float32Array, mode: Uint8Array }) {
+  init(buffers: {
+    position: Float32Array;
+    velocity: Float32Array;
+    phase: Float32Array;
+    mode: Uint8Array;
+  }) {
     // In bitECS 0.4.0, we can define maxEntities for better memory allocation
     world = createWorld({ maxEntities: MAX_DRONES });
 
-    console.log(`[Worker] Initializing with ${buffers.position.byteLength} bytes of shared memory.`);
+    console.log(
+      `[Worker] Initializing with ${buffers.position.byteLength} bytes of shared memory.`,
+    );
 
     // Map bitECS components to existing SharedArrayBuffers
     Position = {
@@ -32,7 +39,7 @@ const workerApi = {
     };
 
     DroneState = {
-      mode: buffers.mode, 
+      mode: buffers.mode,
       phase: buffers.phase,
     };
 
@@ -67,7 +74,7 @@ const workerApi = {
    */
   update(dt: number) {
     if (!world) return;
-    
+
     // In bitECS 0.4.0, query() returns an iterable
     for (const eid of query(world, droneQuery)) {
       // Chaos movement
@@ -90,7 +97,7 @@ const workerApi = {
     }
 
     return true;
-  }
+  },
 };
 
 Comlink.expose(workerApi);

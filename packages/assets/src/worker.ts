@@ -1,8 +1,13 @@
 import * as Comlink from 'comlink';
-import { GltfLoader } from './loaders/gltf';
 import { AudioLoader } from './loaders/audio';
 import { FontLoader } from './loaders/font';
-import type { GltfAssetData, AudioAssetData, TextAssetData, AssetLoaderOptions } from './types';
+import { GltfLoader } from './loaders/gltf';
+import type {
+  AssetLoaderOptions,
+  AudioAssetData,
+  GltfAssetData,
+  TextAssetData,
+} from './types';
 
 /**
  * Worker implementation for @axinite/assets
@@ -15,7 +20,10 @@ const api = {
   /**
    * Loads a glTF asset in the worker
    */
-  async loadGltf(url: string, options: AssetLoaderOptions = {}): Promise<GltfAssetData> {
+  async loadGltf(
+    url: string,
+    options: AssetLoaderOptions = {},
+  ): Promise<GltfAssetData> {
     try {
       return await gltfLoader.load(url, options);
     } catch (error) {
@@ -27,7 +35,10 @@ const api = {
   /**
    * Fetches raw audio bytes in the worker
    */
-  async fetchAudioRaw(url: string, options: AssetLoaderOptions = {}): Promise<{ id: string, rawBuffer: SharedArrayBuffer, mimeType: string }> {
+  async fetchAudioRaw(
+    url: string,
+    options: AssetLoaderOptions = {},
+  ): Promise<{ id: string; rawBuffer: SharedArrayBuffer; mimeType: string }> {
     try {
       const result = await audioLoader.fetchRaw(url, options);
       return result;
@@ -47,7 +58,10 @@ const api = {
   /**
    * Loads an MSDF font (either .ttf or pre-generated .json) in the worker
    */
-  async loadText(url: string, options: AssetLoaderOptions = {}): Promise<TextAssetData> {
+  async loadText(
+    url: string,
+    options: AssetLoaderOptions = {},
+  ): Promise<TextAssetData> {
     try {
       return await fontLoader.load(url, options);
     } catch (error) {
@@ -61,7 +75,7 @@ const api = {
    */
   async clearCache() {
     // TODO: implement clearCache in GltfLoader
-  }
+  },
 };
 
 // Expose the API to the main thread

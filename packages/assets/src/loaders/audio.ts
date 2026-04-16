@@ -1,4 +1,4 @@
-import type { AudioAssetData, AssetLoaderOptions } from '../types';
+import type { AssetLoaderOptions, AudioAssetData } from '../types';
 
 /**
  * Loader for audio files (mp3, wav, ogg, etc.)
@@ -15,12 +15,15 @@ export class AudioLoader {
   /**
    * Fetches raw compressed audio bytes
    */
-  async fetchRaw(url: string, options: AssetLoaderOptions = {}): Promise<{ id: string, rawBuffer: SharedArrayBuffer, mimeType: string }> {
+  async fetchRaw(
+    url: string,
+    options: AssetLoaderOptions = {},
+  ): Promise<{ id: string; rawBuffer: SharedArrayBuffer; mimeType: string }> {
     const id = options.id || url;
 
     // Check if we have it fully decoded in cache
     const cached = this.cache.get(id);
-    if (cached && cached.rawBuffer) {
+    if (cached?.rawBuffer) {
       // If we already have decoded data, we return just enough for main thread to use it
       return {
         id,

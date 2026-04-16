@@ -17,9 +17,7 @@ export class FontLoader {
   private async initMsdfgen() {
     if (!this.msdfgen) {
       // Load msdfgen WASM. It should be placed next to the worker.
-      const response = await fetch(
-        new URL('./msdfgen.wasm', import.meta.url),
-      );
+      const response = await fetch(new URL('./msdfgen.wasm', import.meta.url));
       const wasmBuffer = await response.arrayBuffer();
       this.msdfgen = await Msdfgen.create(wasmBuffer);
     }
@@ -95,21 +93,21 @@ export class FontLoader {
 
     // 4. Construct BMFont-compatible JSON
     const fontJson = {
-      info: { 
-        face: font.names.fontFamily.en, 
+      info: {
+        face: font.names.fontFamily.en,
         size: fontSize,
         msdf: {
           range: 4, // Critical for MSDF shaders
-          fieldType: 'msdf'
-        }
+          fieldType: 'msdf',
+        },
       },
-      common: { 
-        lineHeight: fontSize, 
+      common: {
+        lineHeight: fontSize,
         base: fontSize * 0.8,
         scaleW: result.width,
         scaleH: result.height,
         pages: 1,
-        packed: 0
+        packed: 0,
       },
       pages: ['atlas.png'],
       chars: result.rects.map((rect) => ({

@@ -13,10 +13,18 @@ export interface ComponentData {
 
 export function createSharedComponentData(): ComponentData {
   // Use SharedArrayBuffer for the data
-  const posXSAB = new SharedArrayBuffer(MAX_ENTITIES * Float32Array.BYTES_PER_ELEMENT);
-  const posYSAB = new SharedArrayBuffer(MAX_ENTITIES * Float32Array.BYTES_PER_ELEMENT);
-  const velXSAB = new SharedArrayBuffer(MAX_ENTITIES * Float32Array.BYTES_PER_ELEMENT);
-  const velYSAB = new SharedArrayBuffer(MAX_ENTITIES * Float32Array.BYTES_PER_ELEMENT);
+  const posXSAB = new SharedArrayBuffer(
+    MAX_ENTITIES * Float32Array.BYTES_PER_ELEMENT,
+  );
+  const posYSAB = new SharedArrayBuffer(
+    MAX_ENTITIES * Float32Array.BYTES_PER_ELEMENT,
+  );
+  const velXSAB = new SharedArrayBuffer(
+    MAX_ENTITIES * Float32Array.BYTES_PER_ELEMENT,
+  );
+  const velYSAB = new SharedArrayBuffer(
+    MAX_ENTITIES * Float32Array.BYTES_PER_ELEMENT,
+  );
 
   return {
     Position: {
